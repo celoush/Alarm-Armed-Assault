@@ -1,0 +1,29 @@
+CELO ALARM SCRIPT
+-----------------
+
+verze 1.1
+
+Autor: Celoush
+
+Popis: 
+Tento systém skriptů slouží k vytvoření detekčního systému pro hru ArmA: Armed Assault. Systém se incicalizuje pomocí zavolání skriptu init.sqf v adresáři celo_alarm, kterému je předáno pole, obsahující tři parametry. První dva parametry jsou pole a třetí je název obslužného SQF skriptu.
+Prvním parametrem je pole jednotek, které tvoří hledači. Jsou to oni, kteří mají reagovat na případné kontaktní situace.
+Druhým parametrem je pole jednotek, kteří tvoří hledané. Jsou to oni, které hledači "hledají".
+Třetím parametrem je obslužný SQF skript, který je zavolán v případě, že dojde k nějaké kontaktní situaci. O tom později. Tento skript se hledá primárně v rootu mise.
+
+Příklad volání inicializace:
+_ok=[strazci,vezni,"obsluha_poplachu.sqf"] execVM "celo_alarm\init.sqf"
+
+Systém vrátí chybovou hlášku a boolean hodnotu false pokud nedojde k vytvoření systému (špatné parametry či prázdné pole). Pokud dojde k vytvoření systému, pak vrátí boolean hodnotu true. Systém je pak spuštěn a běží na pozadí hry. Jsou tři stavy, kdy dojde k zavolání obslužného skriptu.
+
+Prvním stavem je situace, kdy hlídač zahlédne nepřítele (libovolného). V tu chvíli dojde k zavolání obslužného skriptu a jsou mu předány tři parametry. Prvním z nich je hledající, druhým je hledaný a třetím je typ situace, který je v tomto případě řetězec "know".
+
+Druhý stav nastane, pokud hlídač zahlédne mrtvolu některého z ostatních hlídačů (řídí se proměnnou celo_alarm_contact_body v souboru config.sqf v adresáři celo_alarm). I tentokrát se předají tři parametry. Prvním je hledající, co zahlédl mrtvolu, druhým je mrtvý strážce a třetím je řetězec, určující typ situace, který je tentokrát "body"
+
+Třetí stav nastane pokud kdokoliv z hledaných či hledajících vystřelí ze zbraně, která způsobí hluk. Vše se řídí pomocí typu munice, kterou dotyčný používá. Seznam "tiché" munice je nastaven v config.sqf a to jako pole (defaultně jde o pole - ["B_545x39_SD","B_9x18_SD","B_556x45_SD","B_9x19_SD","SmokeShell","TimeBomb","PipeBomb","SmokeShellRed","SmokeShellGreen","Mine","MineE","Flare","FlareGreen","FlareRed","FlareYellow"]). Jak je vidět, tak jsou do pole zahrnuty i miny, světlice, dýmovnice a nálože. Jejich hození či položení nevyvolává defaultně poplach. Tudíž v tomto případě jsou předány obslužnému SQF skriptu tři parametry. Prvním je střelec, druhým je typ munice a třetím určující řetězec a to "fire".
+
+Skript je záměrně vytvořen tak, aby bylo možné reagovat na každou takovou situaci dle potřeby a skripty přímo neurčovaly, co budou hlídky dělat. Skript je jen prostředkem. Samotnou reakci na situaci nechává už na tvůrci mise, protože se případ od případu liší.
+
+změny v 1.1
+
+Pozměněn systém z verze 1.0, kdy kontrola knowsabout nahradil příkaz příkaz findNearestEnemy. Systém tak reaguje nejen na nalezeného nepřítele z pole hledaných.
